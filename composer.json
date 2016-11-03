@@ -1,0 +1,31 @@
+{
+    "name": "falkm/hubert-db",
+    "type": "library",
+    "description": "Hubert extension for Database connection",
+    "keywords": [
+        "php",
+        "framework"
+    ],
+    "homepage": "http://falk-m.de/",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Falk Müller",
+            "email": "git@falk-m.de"
+        }
+    ],
+    "support": {
+        "email": "git@falk-m.de",
+        "wiki": "http://falk-m.de/"
+    },
+    "require": {
+        "php": ">=5.5.0",
+        "zendframework/zend-db": "~2.0"
+    },
+    "require-dev": {
+        "falkm/hubert": "1.*"
+    },
+    "autoload": {
+        "psr-4": {"hubert\\extension\\db\\": "src" }
+    }
+}
