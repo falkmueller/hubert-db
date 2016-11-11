@@ -7,7 +7,7 @@ return array(
     
    "config" => array(
         "db" => array(
-            'driver'   => 'Mysqli',
+            'driver'   => 'Pdo_Mysql',
             'database' => 'db_test',
             'username' => 'root',
             'password' => '',
