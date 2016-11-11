@@ -31,7 +31,7 @@ $config = array(
     "config" => array(
         "display_errors" => true,
         "db" => array(
-            'driver'   => 'Mysqli',
+            'driver'   => 'Pdo_Mysql',
             'database' => 'db_test',
             'username' => 'user',
             'password' => 'pass',
@@ -41,15 +41,14 @@ $config = array(
             "route" => "/", 
             "method" => "GET|POST", 
             "target" => function($request, $response, $args){
-                $container = $this->getContainer();    
-                $result = $container["dbAdapter"]->query('SELECT * FROM `db_test` WHERE `id` = ?', [1]);
+                $result = hubert()->container()->dbAdapter->query('SELECT * FROM `db_test` WHERE `id` = :id', ['id' => 1]);
                 print_r($result->current());
             })
         ),
 );
 
-$app->loadConfig($config);
-$app->emit($app->run());
+hubert($config);
+hubert()->emit(hubert()->run());
 ```
 
 For more see the example in this repository.
