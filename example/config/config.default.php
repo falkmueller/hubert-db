@@ -19,6 +19,8 @@ return array(
                    print_r($result->current());
                     
                     print_r(json_encode(\model\test::selectOne(["id" => 1])));
+                    
+                    print_r(json_encode(\model\test::selectAll()));
                 }
             ),
         )

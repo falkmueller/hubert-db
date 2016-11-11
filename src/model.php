@@ -54,6 +54,10 @@ abstract class model implements \JsonSerializable {
     {
         unset($this->_data[$name]);
     }
+    
+    public function toArray(){
+        return $this;
+    }
 
 
     /*Static methods*/
@@ -70,6 +74,10 @@ abstract class model implements \JsonSerializable {
         
     }
 
+    public static function selectAll($where = array()){
+        return static::tableGateway()->select($where)->toArray();
+    }
+    
     public static function selectOne($where){
         return static::tableGateway()->select($where)->current();
     }
