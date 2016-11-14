@@ -6,4 +6,4 @@ require_once '../vendor/autoload.php';
 //init app
 hubert(__dir__.'/config/');
 //run and emit app
-hubert()->emit(hubert()->run());
+hubert()->core()->run();

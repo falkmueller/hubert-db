@@ -14,7 +14,7 @@ return array(
                 "route" => "/", 
                 "method" => "GET|POST", 
                 "target" => function($request, $response, $args){
-                    $dbAdapter = hubert()->container()->dbAdapter;
+                    $dbAdapter = hubert()->dbAdapter;
                     $result = $dbAdapter->query('SELECT * FROM `db_test` WHERE `id` = ?', [1]);
                    print_r($result->current());
                     

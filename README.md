@@ -41,14 +41,14 @@ $config = array(
             "route" => "/", 
             "method" => "GET|POST", 
             "target" => function($request, $response, $args){
-                $result = hubert()->container()->dbAdapter->query('SELECT * FROM `db_test` WHERE `id` = :id', ['id' => 1]);
+                $result = hubert()->dbAdapter->query('SELECT * FROM `db_test` WHERE `id` = :id', ['id' => 1]);
                 print_r($result->current());
             })
         ),
 );
 
 hubert($config);
-hubert()->emit(hubert()->run());
+hubert()->core()->run();
 ```
 
 For more see the example in this repository.

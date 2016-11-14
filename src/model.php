@@ -67,7 +67,7 @@ abstract class model implements \JsonSerializable {
         if(!$tableGateway){
             $resultSetPrototype = new ResultSet();
             $resultSetPrototype->setArrayObjectPrototype(new static());
-            $tableGateway = new TableGateway(static::$table, hubert()->container()->dbAdapter, null, $resultSetPrototype);
+            $tableGateway = new TableGateway(static::$table, hubert()->dbAdapter, null, $resultSetPrototype);
         }
         
         return $tableGateway;
