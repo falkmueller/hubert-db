@@ -4,6 +4,7 @@ namespace hubert\extension\db;
 
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
+use Zend\Db\Sql\Select;
 
 abstract class model implements \JsonSerializable {
     
