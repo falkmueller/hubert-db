@@ -28,7 +28,17 @@ abstract class model implements \JsonSerializable {
     public function exchangeArray(array $data)
     {   
         foreach (static::fields() as $name => $config){
-            $this->_data[$name] = !empty($data[$name]) ? $data[$name] : (isset($config["default"]) ? $config["default"] : null);
+            $value = null;
+            if(isset($data[$name])){
+                $value = $data[$name];
+            }
+            elseif (isset($this->$name)){
+                $value = $this->$name;
+            }
+            elseif (isset($config["default"])){
+                $value = $config["default"];
+            }
+            $this->_data[$name] = $value;
         }
     }
     
@@ -99,6 +109,52 @@ abstract class model implements \JsonSerializable {
     
     public static function selectOne($where){
         return static::tableGateway()->select($where)->current();
+    }
+    
+    public function insert(){
+       $data = array();
+       $auto_id_field = null;
+       foreach (static::fields() as $name => $config){
+            $data[$name] = isset($this->$name) ? $this->$name : (isset($config["default"]) ? $config["default"] : null);
+           
+            if(!empty($config["autoincrement"])){
+                $auto_id_field = $name;
+            }
+       }
+       static::tableGateway()->insert($data);
+       
+        if($auto_id_field){
+            $this->$auto_id_field = static::tableGateway()->getLastInsertValue();
+        }
+    }
+    
+    public function update($rows = array()){
+        $update = array();
+        $primary = array();
+        
+        foreach (static::fields() as $name => $config){
+            if (!empty($config["primary"])){
+                $primary[$name] = $this->$name;
+                if(!empty($config["autoincrement"])){
+                    continue;
+                }
+            }
+            
+            if(!empty($rows) && !in_array($name, $rows) ){
+                continue;
+            }
+            
+            $update[$name] = $this->$name;
+        }
+        
+        if(empty($primary)){
+            throw new \Exception('no primary Row in entity');
+        }
+        elseif(empty($update)){
+            return false;
+        }
+        
+        return static::tableGateway()->update($update, $primary);
     }
     
     protected static function getListQuery($array){
