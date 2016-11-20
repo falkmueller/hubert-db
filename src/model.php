@@ -5,6 +5,7 @@ namespace hubert\extension\db;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Expression;
 
 abstract class model implements \JsonSerializable {
     
@@ -81,6 +82,19 @@ abstract class model implements \JsonSerializable {
                 if($offset){$select->offset($offset);}
                 if($where){$select->where($where);}
             })->toArray();
+    }
+    
+    public static function count($where = array()){
+        $sql = static::tableGateway()->getSql();
+        $select = $sql->select();
+        if($where){$select->where($where);}
+        $select->columns(array(
+                    'count' => new Expression('COUNT(0)')
+                ));
+        
+       $statement = $sql->prepareStatementForSqlObject($select);
+       $result = $statement->execute()->current();
+       return $result["count"];    
     }
     
     public static function selectOne($where){
