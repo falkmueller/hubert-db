@@ -31,14 +31,40 @@ class factory {
         }
         
         $db_fields = array();
+        $primary_fields = array();
         
         foreach ($columns as $field_name => $field){
             $f = array();
             $f["name"] = $field_name;
-            $f["sql"] = isset($field["sql"]) ? $field["sql"] : null;
             
-            if(!$f["sql"]){
-                throw new \Exception("Table {$table_name} Column {$field_name}: funtion createTableByModel require to each row a 'sql' value like 'INT NOT NULL' OR 'VARCHAR(10)'");
+            if(!$field["type"]){
+                throw new \Exception("Table {$table_name} Column {$field_name}: funtion createTableByModel require to each row a 'type' value like 'INT NOT NULL' OR 'VARCHAR(10)'");
+            }
+            
+            $f["sql"] = "`{$field_name}` {$field["type"]}";
+            $f["sql"] .= isset($field["sql"]) ? ' '.$field["sql"] : "";
+            
+            
+            if(isset($field["autoincrement"]) && $field["autoincrement"]){
+                $f["sql"] .= " AUTO_INCREMENT";
+            }
+            
+            if(isset($field["null"]) && $field["null"]){
+                $f["sql"] .= " NULL";
+            } else {
+                $f["sql"] .= " NOT NULL";
+            }
+            
+            if(isset($field["default"])){
+                if(is_string($field["default"]) && strtoupper($field["default"]) == "CURRENT_TIMESTAMP"){
+                    $f["sql"] .= " DEFAULT CURRENT_TIMESTAMP";
+                } else {
+                    $f["sql"] .= " DEFAULT '{$field["default"]}'";
+                }
+            }
+            
+            if(isset($field["primary"]) && $field["primary"]){
+                $primary_fields[] = $field_name;
             }
             
             $db_fields[$field_name] = $f;
@@ -56,8 +82,12 @@ class factory {
         
             foreach ($db_fields as $db_field){
                if($sql) {$sql .= ",";}
-
-               $sql .= " `{$db_field['name']}` {$db_field['sql']}";
+               $sql .= $db_field['sql'];
+            }
+            
+            if(count($primary_fields) > 0){
+                $keys = implode(",",array_map(function($value){ return "`".$value."`";}, $primary_fields));
+                $sql .= " , PRIMARY KEY ({$keys})";
             }
 
             $sql = "CREATE TABLE IF NOT EXISTS `{$table_name}` ({$sql})";
@@ -79,7 +109,7 @@ class factory {
                 }
                 
                 
-                $dbAdapter->query("ALTER TABLE {$table_name} ADD `{$db_field['name']}` {$db_field['sql']}", []);
+                $dbAdapter->query("ALTER TABLE {$table_name} ADD {$db_field['sql']}", []);
             }
         }
         
