@@ -23,5 +23,13 @@ return array(
                     print_r(json_encode(\model\test::selectAll()));
                 }
             ),
+            "install" => array(
+                "route" => "/install", 
+                "method" => "GET|POST", 
+                "target" => function($request, $response, $args){
+                    $factory = new \hubert\extension\db\factory();
+                   $factory->createTableByModel(\model\test::class);
+                }
+            ),
         )
 );
