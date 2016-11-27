@@ -86,11 +86,12 @@ abstract class model implements \JsonSerializable {
         
     }
 
-    public static function selectAll($where = array(), $limit = 0, $offset = 0){
-        return static::tableGateway()->select(function(Select $select) use ($where, $limit, $offset){
+    public static function selectAll($where = array(), $limit = 0, $offset = 0, $order = null){
+        return static::tableGateway()->select(function(Select $select) use ($where, $limit, $offset, $order){
                 if($limit){$select->limit($limit);}
                 if($offset){$select->offset($offset);}
                 if($where){$select->where($where);}
+                if($order){$select->order($order);}
             })->toArray();
     }
     
