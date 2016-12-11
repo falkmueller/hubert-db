@@ -116,5 +116,14 @@ class factory {
         
         
     }
+            
+    public static function getListQuery($array){
+        $values = array();
+        foreach ($array as $value){
+            $values[] = hubert()->dbAdapter->getPlatform()->quoteValue($value);
+        }
+        
+        return implode(",", $values);     
+    }
     
 }

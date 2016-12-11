@@ -158,13 +158,4 @@ abstract class model implements \JsonSerializable {
         return static::tableGateway()->update($update, $primary);
     }
     
-    protected static function getListQuery($array){
-        $values = array();
-        foreach ($array as $value){
-            $values[] = static::tableGateway()->getAdapter()->getPlatform()->quoteValue($value);
-        }
-        
-        return implode(",", $values);     
-    }
-    
 }
