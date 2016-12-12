@@ -158,4 +158,19 @@ abstract class model implements \JsonSerializable {
         return static::tableGateway()->update($update, $primary);
     }
     
+    public function delete(){
+        $primary = array();
+        
+        foreach (static::fields() as $name => $config){
+            if (!empty($config["primary"])){
+                $primary[$name] = $this->$name;
+            }
+        }
+        
+        if(empty($primary)){
+            throw new \Exception('no primary Row in entity');
+        }
+        return static::tableGateway()->delete($primary);
+    }
+    
 }
