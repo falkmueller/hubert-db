@@ -17,12 +17,14 @@ class factory {
         $table = $modelClass::tableGateway()->getTable();
         $fields = $modelClass::fields();
         
-        $this->createTable($table, $fields);
+        $this->createTable($table, $fields , $modelClass::dbAdapter());
     }
     
-    public function createTable($table_name, $columns){
+    public function createTable($table_name, $columns, $dbAdapter = null){
         
-        $dbAdapter = hubert()->dbAdapter;
+        if(!$dbAdapter){
+            $dbAdapter = hubert()->dbAdapter;
+        }
         
         //check db connection
         if(!$dbAdapter->getDriver()->getConnection()->isConnected()){

@@ -37,7 +37,11 @@ abstract class model implements \JsonSerializable {
             }
             elseif (isset($config["default"])){
                 $value = $config["default"];
+                if($value && $value === "CURRENT_TIMESTAMP"){
+                    $value = date('Y-m-d H:i:s',time());
+                }
             }
+            
             $this->_data[$name] = $value;
         }
     }
@@ -71,15 +75,18 @@ abstract class model implements \JsonSerializable {
         return $this;
     }
 
-
     /*Static methods*/
+    public static function dbAdapter(){
+        return hubert()->dbAdapter;
+    }
+    
     public static function tableGateway()
     {
         static $tableGateway;
         if(!$tableGateway){
             $resultSetPrototype = new ResultSet();
             $resultSetPrototype->setArrayObjectPrototype(new static());
-            $tableGateway = new TableGateway(static::$table, hubert()->dbAdapter, null, $resultSetPrototype);
+            $tableGateway = new TableGateway(static::$table, static::dbAdapter(), null, $resultSetPrototype);
         }
         
         return $tableGateway;
