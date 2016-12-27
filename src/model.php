@@ -56,9 +56,7 @@ abstract class model implements \JsonSerializable {
     
     public function __set($name, $value) 
     {
-        if (array_key_exists($name, static::fields())) {
-            $this->_data[$name] = $value;
-        }
+        $this->_data[$name] = $value;
     }
     
      public function __isset($name) 
