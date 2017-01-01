@@ -13,6 +13,7 @@ abstract class model implements \JsonSerializable {
     protected static $table = "";
     
     protected $_data;
+    protected $_dirty_fields = array();
 
     public static function fields(){
         return array();
@@ -33,7 +34,7 @@ abstract class model implements \JsonSerializable {
                 $value = $data[$name];
             }
             elseif (isset($this->$name)){
-                $value = $this->$name;
+                continue;
             }
             elseif (isset($config["default"])){
                 $value = $config["default"];
@@ -42,12 +43,16 @@ abstract class model implements \JsonSerializable {
                 }
             }
             
-            $this->_data[$name] = $value;
+            $this->$name = $value;
         }
     }
     
     public function jsonSerialize() {
         return $this->_data;
+    }
+    
+     public function isDirty(){
+        return count($this->_dirty_fields) > 0;  
     }
     
     public function __get($name){
@@ -56,6 +61,9 @@ abstract class model implements \JsonSerializable {
     
     public function __set($name, $value) 
     {
+        if(isset($this->$name) && $this->$name !== $value && !array_key_exists($name, $this->_dirty_fields)){
+            $this->_dirty_fields[] = $name;
+        }
         $this->_data[$name] = $value;
     }
     
@@ -134,9 +142,14 @@ abstract class model implements \JsonSerializable {
         }
     }
     
-    public function update($rows = array()){
+    public function update($dirty_rows = array(), $update_all = false){
         $update = array();
         $primary = array();
+        
+        if($update_all || (count($dirty_rows) == 0 && count($this->_dirty_fields) > 0)){
+            $dirty_rows = $this->_dirty_fields;
+            $this->_dirty_fields = array();
+        }
         
         foreach (static::fields() as $name => $config){
             if (!empty($config["primary"])){
@@ -146,7 +159,7 @@ abstract class model implements \JsonSerializable {
                 }
             }
             
-            if(!empty($rows) && !in_array($name, $rows) ){
+            if(!empty($dirty_rows) && !in_array($name, $dirty_rows) ){
                 continue;
             }
             
