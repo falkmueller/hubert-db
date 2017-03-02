@@ -176,6 +176,10 @@ abstract class model implements \JsonSerializable {
         return static::tableGateway()->update($update, $primary);
     }
     
+    public static function deleteBy($where = array()){
+        return static::tableGateway()->delete($where);
+    }
+    
     public function delete(){
         $primary = array();
         
