@@ -77,6 +77,19 @@ abstract class model implements \JsonSerializable {
         unset($this->_data[$name]);
     }
     
+    public function __clone()
+   {
+       $object_vars = get_object_vars($this);
+
+       foreach ($object_vars as $attr_name => $attr_value)
+       {
+           if (is_object($this->$attr_name))
+           {
+               $this->$attr_name = clone $this->$attr_name;
+           }
+       }
+   }
+    
     public function toArray(){
         return $this;
     }
