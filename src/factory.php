@@ -34,6 +34,7 @@ class factory {
         
         $db_fields = array();
         $primary_fields = array();
+        $unique_keys = array();
         
         foreach ($columns as $field_name => $field){
             $f = array();
@@ -69,6 +70,13 @@ class factory {
                 $primary_fields[] = $field_name;
             }
             
+            if(isset($field["unique"]) && $field["unique"]){
+                if(!isset($unique_keys[$field["unique"]])){
+                    $unique_keys[$field["unique"]] = array();
+                }
+                $unique_keys[$field["unique"]][] = $field_name;
+            }
+            
             $db_fields[$field_name] = $f;
         }
         
@@ -90,6 +98,11 @@ class factory {
             if(count($primary_fields) > 0){
                 $keys = implode(",",array_map(function($value){ return "`".$value."`";}, $primary_fields));
                 $sql .= " , PRIMARY KEY ({$keys})";
+            }
+            
+            foreach ($unique_keys as $key_name => $key_fields){
+                $keys = implode(",",array_map(function($value){ return "`".$value."`";}, $key_fields));
+                $sql .= " , UNIQUE `{$key_name}` ({$keys})";
             }
 
             $sql = "CREATE TABLE IF NOT EXISTS `{$table_name}` ({$sql})";
