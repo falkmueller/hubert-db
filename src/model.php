@@ -112,19 +112,21 @@ abstract class model implements \JsonSerializable {
         
     }
 
-    public static function selectAll($where = array(), $limit = 0, $offset = 0, $order = null){
-        return static::tableGateway()->select(function(Select $select) use ($where, $limit, $offset, $order){
+    public static function selectAll($where = array(), $limit = 0, $offset = 0, $order = null, $join = null){
+        return static::tableGateway()->select(function(Select $select) use ($where, $limit, $offset, $order, $join){
                 if($limit){$select->limit($limit);}
                 if($offset){$select->offset($offset);}
                 if($where){$select->where($where);}
                 if($order){$select->order($order);}
+                if($join){$join($select);}
             })->toArray();
     }
     
-    public static function count($where = array()){
+    public static function count($where = array(), $join = null){
         $sql = static::tableGateway()->getSql();
         $select = $sql->select();
         if($where){$select->where($where);}
+        if($join){$join($select);}
         $select->columns(array(
                     'count' => new Expression('COUNT(0)')
                 ));
@@ -134,7 +136,7 @@ abstract class model implements \JsonSerializable {
        return $result["count"];    
     }
     
-    public static function selectOne($where){
+    public static function selectOne($where = array()){        
         return static::tableGateway()->select($where)->current();
     }
     
