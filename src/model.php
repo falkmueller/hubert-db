@@ -61,7 +61,7 @@ abstract class model implements \JsonSerializable {
     
     public function __set($name, $value) 
     {
-        if(isset($this->$name) && $this->$name !== $value && !array_key_exists($name, $this->_dirty_fields)){
+        if(isset($this->$name) && $this->$name !== $value && !in_array($name, $this->_dirty_fields)){
             $this->_dirty_fields[] = $name;
         }
         $this->_data[$name] = $value;
